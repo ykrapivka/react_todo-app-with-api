@@ -4,10 +4,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import { deleteTodo, getTodos, postTodos, USER_ID } from './api/todos';
 import { Todo } from './types/Todo';
-import { Footer } from './components/Footer';
+import { Footer } from './Components_temp/Footer';
 import { updateTodos } from './api/todos';
 import classNames from 'classnames';
-import { TodoList } from './components/TodoList';
+import { TodoList } from './Components_temp/TodoList';
 
 export enum Filter {
   ALL = 'All',
