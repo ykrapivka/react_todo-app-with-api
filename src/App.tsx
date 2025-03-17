@@ -3,18 +3,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import { deleteTodo, getTodos, postTodos, USER_ID } from './api/todos';
-import { TodoList } from './Components/todoList';
 import { Todo } from './types/Todo';
-import { Footer } from './Components/Footer';
+import { Footer } from './components/Footer';
 import { updateTodos } from './api/todos';
 import classNames from 'classnames';
+import { TodoList } from './components/TodoList';
+
+export enum Filter {
+  ALL = 'All',
+  ACTIVE = 'Active',
+  COMPLETED = 'Completed',
+}
 
 export const App: React.FC = () => {
   const [input, setInput] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filteredTodos, setFilteredTodos] = useState([...todos]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState(Filter.ALL);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [inputDisabled, setInputDisabled] = useState(false);
   const [tempTodo, setTemptTodo] = useState<Todo | null>(null);
@@ -40,13 +46,13 @@ export const App: React.FC = () => {
     const todosFromServer = [...todos];
 
     switch (filter) {
-      case 'All':
+      case Filter.ALL:
         setFilteredTodos(todosFromServer);
         break;
-      case 'Completed':
+      case Filter.COMPLETED:
         setFilteredTodos(todosFromServer.filter(todo => todo.completed));
         break;
-      case 'Active':
+      case Filter.ACTIVE:
         setFilteredTodos(todosFromServer.filter(todo => !todo.completed));
         break;
     }
@@ -179,6 +185,8 @@ export const App: React.FC = () => {
     }
   }
 
+  const allTodosCompleted = () => todos.every(todo => todo.completed);
+
   return (
     <div className="todoapp">
       <h1 className="todoapp__title">todos</h1>
@@ -189,12 +197,10 @@ export const App: React.FC = () => {
             <button
               type="button"
               className={classNames('todoapp__toggle-all', {
-                active: todos.every(todo => todo.completed),
+                active: allTodosCompleted(),
               })}
               data-cy="ToggleAllButton"
-              onClick={() => {
-                handleCompleteAll();
-              }}
+              onClick={handleCompleteAll}
             />
           )}
 

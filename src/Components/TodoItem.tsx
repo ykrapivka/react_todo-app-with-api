@@ -27,6 +27,13 @@ export const TodoItem: React.FC<Props> = ({
     setLoader(false);
   }
 
+  async function toggle() {
+    setLoader(true);
+    await markCompleted(todo);
+    setLoader(false);
+  }
+
+
   function handlgeInputClick() {
     setEditing(true);
     setTimeout(() => {
@@ -37,11 +44,9 @@ export const TodoItem: React.FC<Props> = ({
   async function handleTitleChange(
     e:
     | React.KeyboardEvent<HTMLInputElement>
-    | React.FocusEvent<HTMLInputElement, Element>
-    | React.FormEvent<HTMLFormElement>
+    | React.FocusEvent<HTMLInputElement, Element>,
   ) {
-    e.preventDefault();
-    const trimmedTitle = newTitle.trim();
+    const trimmedTitle = (e.target as HTMLInputElement).value.trim();
 
     if (!trimmedTitle) {
       handleDeleteTodo();
@@ -67,6 +72,25 @@ export const TodoItem: React.FC<Props> = ({
     }
   }
 
+  function HandleKeyPressed(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      handleTitleChange(e);
+    }
+
+    if (e.key === 'Escape') {
+      setEditing(false);
+      setNewTitle(todo.title);
+    }
+  }
+
+  function handleBlur(e: React.FocusEvent<HTMLInputElement, Element>) {
+    if (e.target.value === todo.title) {
+      setEditing(false);
+    } else {
+      handleTitleChange(e);
+    }
+  }
+
   return (
     <div
       data-cy="Todo"
@@ -80,45 +104,26 @@ export const TodoItem: React.FC<Props> = ({
           type="checkbox"
           className="todo__status"
           checked={todo.completed}
-          onClick={async () => {
-            setLoader(true);
-            await markCompleted(todo);
-            setLoader(false);
-          }}
+          onClick={toggle}
         />
       </label>
 
       {editing ? (
-        <form data-cy="TodoForm" onSubmit={e => handleTitleChange(e)}>
-          <input
-            type="text"
-            ref={inputRef}
-            data-cy="TodoTitleField"
-            value={newTitle}
-            className="todo__title-field"
-            onChange={e => setNewTitle(e.target.value)}
-            onBlur={e => {
-              if (newTitle.trim() === todo.title) {
-                setEditing(false);
-              } else {
-                handleTitleChange(e);
-              }
-
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Escape') {
-                setEditing(false);
-              }
-            }}
-          />
-        </form>
+        <input
+          type="text"
+          ref={inputRef}
+          data-cy="TodoTitleField"
+          value={newTitle}
+          className="todo__title--edit"
+          onChange={e => setNewTitle(e.target.value)}
+          onBlur={e => handleBlur(e)}
+          onKeyDown={e => HandleKeyPressed(e)}
+        />
       ) : (
         <span
           data-cy="TodoTitle"
           className="todo__title"
-          onDoubleClick={() => {
-            handlgeInputClick();
-          }}
+          onDoubleClick={handlgeInputClick}
         >
           {todo.title}
         </span>
