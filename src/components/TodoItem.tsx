@@ -114,7 +114,7 @@ export const TodoItem: React.FC<Props> = ({
           ref={inputRef}
           data-cy="TodoTitleField"
           value={newTitle}
-          className="todo__title--edit"
+          className="todo__title-field"
           onChange={e => setNewTitle(e.target.value)}
           onBlur={e => handleBlur(e)}
           onKeyDown={e => HandleKeyPressed(e)}

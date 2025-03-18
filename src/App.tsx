@@ -204,14 +204,14 @@ export const App: React.FC = () => {
             />
           )}
 
-          <form onSubmit={e => handleSubmit(e)}>
+          <form onSubmit={handleSubmit}>
             <input
               data-cy="NewTodoField"
               type="text"
               className="todoapp__new-todo"
               placeholder="What needs to be done?"
               value={input}
-              onChange={e => handleInputChange(e)}
+              onChange={handleInputChange}
               ref={inputRef}
               disabled={inputDisabled}
             />
